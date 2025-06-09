@@ -1,0 +1,32 @@
+name: Auto‐interlink pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  interlink:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install axios cheerio glob
+
+      - name: Run interlink script
+        run: node embed_site_links.js
+
+      - name: Commit patched HTML
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: main
+          commit_message: 'chore: auto-update interlinking'
+          file_pattern: '**/index.html'
